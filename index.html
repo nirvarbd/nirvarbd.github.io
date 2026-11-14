@@ -2527,6 +2527,13 @@ async function loadProducts(){
       try{ localStorage.setItem(PRODUCTS_CACHE_KEY, JSON.stringify(fresh)); }catch(e){}
       fillCategorySelects();
       renderProducts();
+    } else if (Array.isArray(data.products) && !data.error){
+      // সার্ভার সফলভাবে খালি তালিকা দিয়েছে — পুরনো ক্যাশ মুছে ফেলা হলো
+      PRODUCTS = [];
+      try{ localStorage.removeItem(PRODUCTS_CACHE_KEY); }catch(e){}
+      fillCategorySelects();
+      const cnt = document.getElementById('productCount'); if (cnt) cnt.textContent = '';
+      document.getElementById('homeProductGrid').innerHTML = `<div class="empty-state" style="grid-column:1/-1">কোনো পণ্য পাওয়া যায়নি</div>`;
     } else if (!hadCache){
       document.getElementById('homeProductGrid').innerHTML = `<div class="empty-state" style="grid-column:1/-1">কোনো পণ্য পাওয়া যায়নি</div>`;
     }
