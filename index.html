@@ -741,6 +741,23 @@
   .ft-tap{ cursor:pointer; user-select:none; -webkit-user-select:none; touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
   .pay-sub{ margin:8px 0 0; padding:10px; border:1px dashed var(--hairline); border-radius:8px; display:grid; gap:8px; }
   .pay-sub-title{ font-size:0.8rem; font-weight:700; color:var(--ink-soft); margin:2px 0 -2px; }
+
+  /* ===== v11: হিরো লেখা সব ডিভাইসে ফিট + Category ফরম ===== */
+  .hero .hero-slides:not(.has-pics){ aspect-ratio:auto; min-height:0; overflow:visible; background:transparent; border:none; }
+  .hero .hero-slides:not(.has-pics) .hero-slide{ padding:4px 10px; text-align:center; }
+  .hero h1{ font-size:clamp(1.15rem,5.2vw,2.3rem); line-height:1.4; margin:0 0 8px; overflow-wrap:anywhere; text-align:center; }
+  .hero p{ font-size:clamp(0.82rem,3.5vw,1rem); line-height:1.6; overflow-wrap:anywhere; text-align:center; }
+  .cat-grid{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; max-width:860px; margin-bottom:6px; }
+  @media (max-width:700px){ .cat-grid{ grid-template-columns:minmax(0,1fr); } }
+  .cat-box{ border:1px solid var(--hairline); border-radius:10px; padding:14px; background:var(--white); min-width:0; }
+  .cat-box-head{ margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid var(--hairline); }
+  .cat-box-head h4{ margin:0 0 2px; font-size:1rem; }
+  .cat-box-head span{ display:block; font-size:0.78rem; color:var(--ink-soft); }
+  .cat-rows{ counter-reset:catn; margin-bottom:6px; }
+  .cat-set-row{ display:grid; grid-template-columns:24px minmax(0,1fr) auto; gap:8px; align-items:center; margin-bottom:8px; }
+  .cat-set-row::before{ counter-increment:catn; content:counter(catn); text-align:center; font-size:0.78rem; color:var(--ink-soft); font-weight:700; }
+  .cat-set-row .cat-name{ width:100%; box-sizing:border-box; padding:9px 10px; border:1px solid var(--hairline); border-radius:8px; font-family:inherit; font-size:0.92rem; background:var(--bg); }
+  .cat-set-row .cat-name:focus{ border-color:var(--primary); outline:none; }
 </style>
 </head>
 <body>
@@ -1345,12 +1362,18 @@
           <div class="acc-body">
             <div class="form-card">
               <p style="font-size:0.85rem;color:var(--ink-soft);margin-top:0;">এখানে ক্যাটাগরি যুক্ত করলে সংশ্লিষ্ট সব ফরমের ক্যাটাগরি ফিল্ডে (এবং হোমপেজের ফিল্টারে) সাথে সাথে যুক্ত হবে।</p>
-              <h4 style="margin:6px 0;">পণ্যের ক্যাটাগরি <span style="font-weight:400;font-size:0.8rem;color:var(--ink-soft);">(Product Form ও হোমপেজ ফিল্টার)</span></h4>
-              <div id="catRowsProd"></div>
-              <button type="button" class="btn btn-outline btn-sm" id="catAddProd" style="margin-bottom:16px;">+ নতুন ক্যাটাগরি</button>
-              <h4 style="margin:6px 0;">খরচের ক্যাটাগরি <span style="font-weight:400;font-size:0.8rem;color:var(--ink-soft);">(Expenses ফরম)</span></h4>
-              <div id="catRowsExp"></div>
-              <button type="button" class="btn btn-outline btn-sm" id="catAddExp" style="margin-bottom:12px;">+ নতুন ক্যাটাগরি</button>
+              <div class="cat-grid">
+                <section class="cat-box">
+                  <div class="cat-box-head"><h4>পণ্যের ক্যাটাগরি</h4><span>Product Form ও হোমপেজ ফিল্টার</span></div>
+                  <div id="catRowsProd" class="cat-rows"></div>
+                  <button type="button" class="btn btn-outline btn-sm" id="catAddProd">+ নতুন ক্যাটাগরি</button>
+                </section>
+                <section class="cat-box">
+                  <div class="cat-box-head"><h4>খরচের ক্যাটাগরি</h4><span>Expenses ফরম</span></div>
+                  <div id="catRowsExp" class="cat-rows"></div>
+                  <button type="button" class="btn btn-outline btn-sm" id="catAddExp">+ নতুন ক্যাটাগরি</button>
+                </section>
+              </div>
               <div class="form-actions"><button class="btn btn-teal" id="catSaveBtn" type="button">সংরক্ষণ করুন</button></div>
             </div>
           </div>
@@ -4679,8 +4702,8 @@ function setSelectValue(sel, val, fallback){
   sel.value = v;
 }
 function catRowHtml(name){
-  return `<div class="cat-row" style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
-    <input type="text" class="cat-name" value="${esc(name)}" maxlength="40" placeholder="ক্যাটাগরির নাম" style="flex:1;">
+  return `<div class="cat-set-row">
+    <input type="text" class="cat-name" value="${esc(name)}" maxlength="40" placeholder="ক্যাটাগরির নাম">
     <button type="button" class="btn btn-outline btn-sm cat-del">মুছুন</button></div>`;
 }
 function renderCatRows(){
@@ -4694,7 +4717,7 @@ function renderCatRows(){
     const ins = box.querySelectorAll('.cat-name'); ins[ins.length - 1].focus();
   });
   document.getElementById('catRows' + k).addEventListener('click', e=>{
-    const b = e.target.closest('.cat-del'); if (b) b.closest('.cat-row').remove();
+    const b = e.target.closest('.cat-del'); if (b) b.closest('.cat-set-row').remove();
   });
 });
 document.getElementById('catSaveBtn').addEventListener('click', async ()=>{
