@@ -2167,8 +2167,12 @@ function applySiteInfo(){
   document.getElementById('footerCredit').innerHTML =
     (SITE.address ? `<div>📍 ${esc(SITE.address)}</div>` : '') +
     `<div id="footerRights" class="ft-tap">© ${new Date().getFullYear()} ${esc(name)} — সকল অধিকার সংরক্ষিত</div>` +
-    `<div id="footerDev" class="ft-tap" style="margin-top:4px;">© ${new Date().getFullYear()} Copyright: AM Shahed</div>` +
-    `<div id="footerDevInfo" style="display:none;margin-top:4px;font-size:0.9em;">Mobile No: 01605721296, Email: <a href="mailto:amneed96@gmail.com">amneed96@gmail.com</a></div>`;
+    `<div style="margin-top:4px;">©Copyright: AM Shahed- <span id="footerDev" class="ft-tap" style="text-decoration:underline;font-weight:600;">Contact</span></div>` +
+    `<div id="footerDevInfo" style="display:none;margin-top:6px;font-size:0.9em;line-height:1.9;">` +
+      `<div>Mobile No (WhatsApp): <a href="#" id="devPhoneBtn" style="font-weight:700;">01605721296</a></div>` +
+      `<div id="devPhoneOpts" style="display:none;"><a href="tel:+8801605721296" style="margin-right:12px;">📞 কল করুন</a><a href="https://wa.me/8801605721296" target="_blank" rel="noopener">💬 WhatsApp মেসেজ</a></div>` +
+      `<div>Email: <a href="mailto:amneed96@gmail.com">amneed96@gmail.com</a></div>` +
+    `</div>`;
 }
 
 function applySocialLinks(){
@@ -2304,6 +2308,12 @@ document.getElementById('footerCredit').addEventListener('click', e=>{
     const now = Date.now();
     if (now - _lastRightsTap < 450){ _lastRightsTap = 0; openAuthority(); }
     else _lastRightsTap = now;
+    return;
+  }
+  if (e.target.closest('#devPhoneBtn')){
+    e.preventDefault();
+    const o = document.getElementById('devPhoneOpts');
+    o.style.display = o.style.display === 'none' ? 'block' : 'none';
     return;
   }
   if (e.target.closest('#footerDev')){
@@ -4467,28 +4477,29 @@ function applyPaymentSettings(s){
   renderPayOptions();
 }
 function payChecked(name){ return (document.querySelector('input[name="' + name + '"]:checked') || {}).value || ''; }
+function payVal(id){ const el = document.getElementById(id); return el ? el.value : ''; }
 function renderPayOne(u, reset){
   const box = document.getElementById(u.opt), field = document.getElementById(u.field);
   if (!box || !field) return;
   const hasM = PAY_METHODS.some(m=>m.type !== 'bank'), hasB = PAY_METHODS.some(m=>m.type === 'bank');
+  const typeId = u.radio + 'TypeSel', methId = u.radio + 'MethodSel';
   let mode = reset ? 'cod' : (payChecked(u.radio + 'Mode') || 'cod');
   if (!PAY_METHODS.length) mode = 'cod';
-  let type = reset ? '' : payChecked(u.radio + 'Type');
-  if (type !== 'mobile' && type !== 'bank') type = '';
-  if (type === 'mobile' && !hasM) type = '';
-  if (type === 'bank' && !hasB) type = '';
-  if (!type) type = hasM ? 'mobile' : 'bank';
-  const list = PAY_METHODS.filter(m=> (m.type === 'bank') === (type === 'bank'));
-  let cur = reset ? '' : payChecked(u.radio);
-  if (!list.some(m=>m.name === cur)) cur = list.length ? list[0].name : '';
+  let type = reset ? '' : payVal(typeId);
+  if ((type === 'mobile' && !hasM) || (type === 'bank' && !hasB) || (type !== 'mobile' && type !== 'bank')) type = '';
+  const list = type ? PAY_METHODS.filter(m=> (m.type === 'bank') === (type === 'bank')) : [];
+  let cur = reset ? '' : payVal(methId);
+  if (!list.some(m=>m.name === cur)) cur = '';
   const rad = (nm, v, on, label)=> `<label class="area-option"><input type="radio" name="${nm}" value="${esc(v)}"${on ? ' checked' : ''}><span>${label}</span></label>`;
   let html = rad(u.radio + 'Mode', 'cod', mode === 'cod', 'ক্যাশ অন ডেলিভারি') + rad(u.radio + 'Mode', 'pay', mode === 'pay', 'পেমেন্ট');
   if (mode === 'pay'){
-    html += '<div class="pay-sub"><div class="pay-sub-title">পেমেন্টের ধরন</div>';
-    if (hasM) html += rad(u.radio + 'Type', 'mobile', type === 'mobile', 'মোবাইল ব্যাংকিং');
-    if (hasB) html += rad(u.radio + 'Type', 'bank', type === 'bank', 'ব্যাংক');
-    html += '<div class="pay-sub-title">' + (type === 'bank' ? 'ব্যাংক বাছুন' : 'মোবাইল ব্যাংকিং বাছুন') + '</div>';
-    html += list.map(m=> rad(u.radio, m.name, m.name === cur, esc(m.name))).join('') + '</div>';
+    html += '<div class="pay-sub">';
+    html += `<div class="field" style="margin:0"><label for="${typeId}">পেমেন্টের ধরন</label><select id="${typeId}"><option value="">-- বাছুন --</option>` +
+            (hasM ? `<option value="mobile"${type === 'mobile' ? ' selected' : ''}>মোবাইল ব্যাংকিং</option>` : '') +
+            (hasB ? `<option value="bank"${type === 'bank' ? ' selected' : ''}>ব্যাংকিং</option>` : '') + `</select></div>`;
+    html += `<div class="field" style="margin:0"><label for="${methId}">মাধ্যম</label><select id="${methId}"${type ? '' : ' disabled'}><option value="">-- বাছুন --</option>` +
+            list.map(m=> `<option value="${esc(m.name)}"${m.name === cur ? ' selected' : ''}>${esc(m.name)}</option>`).join('') + `</select></div>`;
+    html += '</div>';
   }
   box.innerHTML = html;
   field.style.display = (!PAY_METHODS.length || (u.pre === 'pay' && field.dataset.shop === '1')) ? 'none' : '';
@@ -4498,7 +4509,7 @@ function renderPayOptions(reset){ PAY_UI.forEach(u=> renderPayOne(u, reset)); }
 function renderPayDetail(u){
   const wrap = document.getElementById(u.detail);
   const mode = payChecked(u.radio + 'Mode') || 'cod';
-  const v = payChecked(u.radio);
+  const v = payVal(u.radio + 'MethodSel');
   const m = mode === 'pay' ? PAY_METHODS.find(x=>x.name === v) : null;
   if (!m){ wrap.innerHTML = ''; return; }
   const bank = m.type === 'bank';
@@ -4511,7 +4522,7 @@ function renderPayDetail(u){
       <div class="pay-note">টাকা পাঠিয়ে নিচের তথ্য দিন। পেমেন্ট যাচাই করে অর্ডার কনফার্ম করা হবে।</div>
     </div>
     <div class="pay-inputs">
-      <div class="field"><label for="${u.pre}From">যে ${bank ? 'অ্যাকাউন্ট' : 'নম্বর'} থেকে পাঠিয়েছেন</label><input type="text" id="${u.pre}From" inputmode="${bank ? 'text' : 'tel'}" autocomplete="off"></div>
+      <div class="field"><label for="${u.pre}From">${bank ? 'অ্যাকাউন্ট নং' : 'মোবাইল নং'} (যেটা থেকে পাঠিয়েছেন)</label><input type="text" id="${u.pre}From" inputmode="${bank ? 'text' : 'tel'}" autocomplete="off"></div>
       <div class="field"><label for="${u.pre}Trx">ট্রানজেকশন আইডি (TrxID)</label><input type="text" id="${u.pre}Trx" autocomplete="off"></div>
     </div>`;
   updatePayAmt();
@@ -4532,10 +4543,12 @@ document.addEventListener('click', e=>{
 function collectPayment(u){
   const mode = payChecked(u.radio + 'Mode') || 'cod';
   if (!PAY_METHODS.length || mode !== 'pay') return { paymentMethod: PAY_COD };
-  const v = payChecked(u.radio);
+  if (!payVal(u.radio + 'TypeSel')){ showToast('পেমেন্টের ধরন বাছুন'); return null; }
+  const v = payVal(u.radio + 'MethodSel');
   if (!v){ showToast('পেমেন্টের মাধ্যম বাছুন'); return null; }
+  const isBank = (PAY_METHODS.find(x=>x.name === v) || {}).type === 'bank';
   const fromEl = document.getElementById(u.pre + 'From'), trxEl = document.getElementById(u.pre + 'Trx');
-  if (!fromEl.value.trim()){ showToast('যে নম্বর/অ্যাকাউন্ট থেকে টাকা পাঠিয়েছেন তা লিখুন'); fromEl.focus(); return null; }
+  if (!fromEl.value.trim()){ showToast(isBank ? 'যে অ্যাকাউন্ট থেকে টাকা পাঠিয়েছেন তার নম্বর লিখুন' : 'যে মোবাইল নম্বর থেকে টাকা পাঠিয়েছেন তা লিখুন'); fromEl.focus(); return null; }
   if (!trxEl.value.trim()){ showToast('ট্রানজেকশন আইডি (TrxID) লিখুন'); trxEl.focus(); return null; }
   return { paymentMethod: v, paymentFrom: fromEl.value.trim(), trxId: trxEl.value.trim() };
 }
