@@ -995,12 +995,18 @@
           <button data-status="Delivery">ডেলিভারি সম্পন্ন</button>
           <button data-status="Cancel">বাতিল</button>
         </div>
+        <div class="pill-tabs" id="orpTabs">
+          <button type="button" data-k="daily">দৈনিক</button>
+          <button type="button" data-k="weekly">সাপ্তাহিক</button>
+          <button type="button" data-k="monthly">মাসিক</button>
+          <button type="button" data-k="yearly">বাৎসরিক</button>
+          <button type="button" class="active" data-k="total">সব</button>
+        </div>
+        <div class="period-bar">
+          <div class="field" style="display:none;"><label id="orpDateLabel">তারিখ বাছুন</label><input type="date" id="orpDate"></div>
+          <div class="field" id="orpToField" style="display:none;"><label>শেষ তারিখ</label><input type="date" id="orpDateTo"></div>
+        </div>
         <div class="table-toolbar">
-          <span id="ordersMonthBox" style="display:none;align-items:center;gap:6px;">
-            <label for="ordersMonth" style="font-size:0.82rem;font-weight:700;">মাস:</label>
-            <input type="month" id="ordersMonth" style="padding:5px 8px;border:1px solid var(--hairline);border-radius:8px;">
-            <button class="btn btn-outline btn-sm" id="ordersMonthAllBtn" type="button">সব মাস</button>
-          </span>
           <button class="btn btn-outline btn-sm" id="ordersRefreshBtn">রিফ্রেশ</button>
           <button class="btn btn-outline btn-sm" id="ordersPrintBtn">🖨️ প্রিন্ট করুন</button>
           <button class="btn btn-sm" id="ordersDeleteAllBtn" style="display:none;background:var(--danger);color:#fff;">🗑️ সকল ডিলেট</button>
@@ -3775,23 +3781,20 @@ document.querySelectorAll('#orderStatusTabs button').forEach(tab=>{
     document.querySelectorAll('#orderStatusTabs button').forEach(t=>t.classList.remove('active'));
     tab.classList.add('active');
     currentReportStatus = tab.dataset.status;
-    const mb = document.getElementById('ordersMonthBox');
-    mb.style.display = (currentReportStatus === 'Delivery' || currentReportStatus === 'Cancel') ? 'inline-flex' : 'none';
     loadOrdersReport();
   });
 });
 document.getElementById('ordersRefreshBtn').addEventListener('click', loadOrdersReport);
-// মাস ভিত্তিক ফিল্টার (ডেলিভারি সম্পন্ন ও বাতিল)
+// সময় ভিত্তিক ফিল্টার (সব স্ট্যাটাসে: দৈনিক / সাপ্তাহিক / মাসিক / বাৎসরিক / সব)
 function ordersMonthSel(){
-  if (currentReportStatus !== 'Delivery' && currentReportStatus !== 'Cancel') return '';
-  return document.getElementById('ordersMonth').value || '';
+  if (typeof ORP === 'undefined' || ORP.kind === 'total') return '';
+  return rangeOf(ORP).label;
 }
 function ordersView(){
-  const m = ordersMonthSel();
-  return m ? _currentOrdersList.filter(o=> String(toYmd(o.timestamp) || '').slice(0,7) === m) : _currentOrdersList;
+  if (typeof ORP === 'undefined' || ORP.kind === 'total') return _currentOrdersList;
+  const r = rangeOf(ORP);
+  return _currentOrdersList.filter(o=> inRange(o.timestamp, r));
 }
-document.getElementById('ordersMonth').addEventListener('change', renderOrdersTable);
-document.getElementById('ordersMonthAllBtn').addEventListener('click', ()=>{ document.getElementById('ordersMonth').value = ''; renderOrdersTable(); });
 document.getElementById('ordersDeleteAllBtn').addEventListener('click', async ()=>{
   if (!_currentOrdersList.length) return;
   if (!ask('বাতিল তালিকার সকল অর্ডার একসাথে মুছে ফেলবেন? এটি আর ফেরানো যাবে না।')) return;
@@ -3838,7 +3841,7 @@ function renderOrdersTable(){
   const wrap = document.getElementById('ordersTableWrap');
   document.getElementById('ordersDeleteAllBtn').style.display = (currentReportStatus === 'Cancel' && _currentOrdersList.length) ? '' : 'none';
   const view = ordersView();
-  if (!view.length){ wrap.innerHTML = `<div class="empty-state">${ordersMonthSel() ? 'এই মাসে কোনো অর্ডার নেই' : 'এই স্ট্যাটাসে কোনো অর্ডার নেই'}</div>`; return; }
+  if (!view.length){ wrap.innerHTML = `<div class="empty-state">${ordersMonthSel() ? 'এই সময়ে কোনো অর্ডার নেই' : 'এই স্ট্যাটাসে কোনো অর্ডার নেই'}</div>`; return; }
   const isNew = currentReportStatus === 'New';
 
   wrap.innerHTML = `
@@ -3987,8 +3990,8 @@ function printThermalInvoice(o, opt2){
 document.getElementById('ordersPrintBtn').addEventListener('click', ()=>{
   const view = ordersView(), mSel = ordersMonthSel();
   if (!view.length){ showToast('প্রিন্ট করার মতো অর্ডার নেই'); return; }
-  const stLabel = currentReportStatus === 'Delivery' ? 'ডেলিভারি সম্পন্ন' : currentReportStatus === 'Cancel' ? 'বাতিল' : currentReportStatus;
-  const mLabel = mSel ? ' — ' + new Date(Number(mSel.slice(0,4)), Number(mSel.slice(5,7)) - 1, 1).toLocaleDateString('bn-BD', { month:'long', year:'numeric' }) : '';
+  const stLabel = currentReportStatus === 'Delivery' ? 'ডেলিভারি সম্পন্ন' : currentReportStatus === 'Cancel' ? 'বাতিল' : currentReportStatus === 'Pending' ? 'বুকিং' : currentReportStatus === 'New' ? 'নতুন অর্ডার' : currentReportStatus;
+  const mLabel = mSel ? ' — ' + mSel : '';
   const grand = view.reduce((a,o)=> a + (Number(o.total) || 0), 0);
   const cols = 10 + (currentReportStatus === 'Delivery' ? 1 : 0);
   printTableWindow('অর্ডার রিপোর্ট — ' + stLabel + mLabel,
@@ -5677,6 +5680,8 @@ function printReportDoc(title, periodLabel, bodyHtml){
 
 /* ---------- Report ---------- */
 let RPT_DATA = null;
+var ORP = wirePeriod('orp', ()=> renderOrdersTable());
+ORP.kind = 'total';
 const RPT = wirePeriod('rpt', ()=> renderReport());
 
 async function loadReport(){
