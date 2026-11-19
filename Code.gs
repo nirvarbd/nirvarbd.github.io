@@ -7,6 +7,8 @@ var SHEET_SCHEMAS = {
   'Products': ['id','name','category','unit','desc','price','discount','stock','image','status','colors','sizes'],
   'Orders':   ['orderId','timestamp','customerName','phone','productName','category','deliveryArea','address','quantity','unit','color','size','unitPrice','subtotal','deliveryCharge','total','status','salesProcess','paymentMethod','paymentFrom','trxId'],
   'Slides': ['slideId','image','sort','createdAt'],
+  'Messages': ['messageId','createdAt','name','address','mobile','title','message','read'],
+  'Comments': ['commentId','productId','productName','name','text','createdAt','updatedAt','ownerHash'],
   'Expenses': ['expenseId','timestamp','category','description','amount','voucherNo','date'],
   'About':    ['key','value','updatedAt'],
   'Settings': ['key','value','updatedAt'],
@@ -114,8 +116,8 @@ function buildRow(headers, map) {
 
 /* ======== HTTP HANDLERS ======== */
 
-var PUBLIC_GET  = { products:1, slides:1, settings:1, about:1 };
-var PUBLIC_POST = { order:1, adminLogin:1, listAdminNames:1, sendRecoveryPin:1, verifyRecoveryPin:1 };
+var PUBLIC_GET  = { products:1, slides:1, settings:1, about:1, comments:1 };
+var PUBLIC_POST = { order:1, sendMessage:1, addComment:1, editComment:1, deleteComment:1, adminLogin:1, listAdminNames:1, sendRecoveryPin:1, verifyRecoveryPin:1 };
 var SESSION_TTL = 21600;   // ৬ ঘণ্টা (CacheService-এর সর্বোচ্চ)
 
 function newSession(name) {
@@ -146,6 +148,9 @@ function doGet(e) {
   if (action === 'deposits')    return jsonResponse(getDeposits());
   if (action === 'withdrawals') return jsonResponse(getWithdrawals());
   if (action === 'incomes')     return jsonResponse(getIncomes());
+  if (action === 'messages')    return jsonResponse(getMessages());
+  if (action === 'comments')    return jsonResponse(getComments(e.parameter.productId, e.parameter.owner));
+  if (action === 'allcomments') return jsonResponse(getAllComments());
   return jsonResponse({ error: 'Unknown action' });
 }
 
@@ -181,6 +186,12 @@ function handlePost(body) {
     case 'deletePurchase':    return jsonResponse(deletePurchase(body.invoiceNo));
     case 'payDue':            return jsonResponse(payDue(body.invoiceNo, body.amount, body.date, body.note));
     case 'payAllDue':         return jsonResponse(payAllDue(body.date, body.note));
+    case 'sendMessage':       return jsonResponse(saveMessage(body.message));
+    case 'addComment':        return jsonResponse(saveComment(body.comment, body.owner));
+    case 'editComment':       return jsonResponse(editComment(body.commentId, body.text, body.owner));
+    case 'deleteComment':     return jsonResponse(deleteComment(body.commentId, body.owner, checkSession(body.token)));
+    case 'markMessageRead':   return jsonResponse(markMessageRead(body.messageId));
+    case 'deleteMessage':     return jsonResponse(deleteMessage(body.messageId));
     case 'addSlide':          return jsonResponse(addSlide(body.image));
     case 'deleteSlide':       return jsonResponse(deleteSlide(body.slideId));
     case 'moveSlide':         return jsonResponse(moveSlide(body.slideId, body.dir));
@@ -1131,7 +1142,7 @@ function payAllDue(date, note) {
 function readSlides() {
   var sheet = ensureSheet('Slides');
   var list = rowsToObjects(sheet.getDataRange().getValues()).map(function(o) {
-    return { slideId: String(o.slideId), image: String(o.image || ''), sort: Number(o.sort) || 0 };
+    return { slideId: String(o.slideid || ''), image: String(o.image || ''), sort: Number(o.sort) || 0 };
   }).filter(function(x) { return x.slideId && x.image; });
   list.sort(function(a, b) { return a.sort - b.sort; });
   return list;
@@ -1152,6 +1163,192 @@ function addSlide(image) {
     var id = 'SL-' + new Date().getTime() + '-' + Math.floor(Math.random() * 100000);
     appendRowText(sheet, headers, { 'slideid': id, 'image': image, 'sort': max + 1, 'createdat': new Date() }, []);
     return { success: true, slideId: id };
+  } finally { lock.releaseLock(); }
+}
+
+/* ======== MESSAGES (ওয়েবসাইট থেকে আসা মেসেজ) ======== */
+
+function clipText(v, n, keepNl) {
+  var s = String(v == null ? '' : v);
+  s = keepNl ? s.replace(/[\u0000-\u0009\u000B\u000C\u000E-\u001F]/g, ' ') : s.replace(/[\u0000-\u001F]/g, ' ');
+  return s.trim().slice(0, n);
+}
+
+// সবার জন্য খোলা: কাস্টমার মেসেজ পাঠাতে পারবে (স্প্যাম সীমা সহ)
+function saveMessage(m) {
+  m = m || {};
+  if (String(m.hp || '').trim()) return { success: true };   // বট ধরা পড়লে নীরবে বাদ
+  var name = clipText(m.name, 80), addr = clipText(m.address, 200), mobile = clipText(m.mobile, 20),
+      title = clipText(m.title, 120), text = clipText(m.message, 2000, true);
+  if (!name || !mobile || !title || !text) return { error: 'নাম, মোবাইল নং, শিরোনাম ও মেসেজ লিখুন' };
+  if (!/^\+?\d{10,15}$/.test(mobile.replace(/[\s-]/g, ''))) return { error: 'মোবাইল নম্বর সঠিক নয়' };
+  var cache = CacheService.getScriptCache();
+  var tkey = 'msgthr_' + mobile.replace(/\D/g, '');
+  var cnt = Number(cache.get(tkey) || 0), all = Number(cache.get('msgthr_all') || 0);
+  if (cnt >= 3 || all >= 60) return { error: 'অনেকবার মেসেজ পাঠানো হয়েছে, কিছুক্ষণ পরে আবার চেষ্টা করুন' };
+  var lock = LockService.getScriptLock();
+  lock.waitLock(15000);
+  try {
+    var sheet = ensureSheet('Messages'), headers = getHeaders(sheet);
+    var id = 'MSG-' + new Date().getTime() + '-' + Math.floor(Math.random() * 100000);
+    appendRowText(sheet, headers, {
+      'messageid': id, 'createdat': Utilities.formatDate(new Date(), TZ, "yyyy-MM-dd'T'HH:mm:ss"),
+      'name': name, 'address': addr, 'mobile': mobile, 'title': title, 'message': text, 'read': ''
+    }, ['messageid', 'createdat', 'name', 'address', 'mobile', 'title', 'message', 'read']);
+    cache.put(tkey, String(cnt + 1), 3600);
+    cache.put('msgthr_all', String(all + 1), 3600);
+    return { success: true };
+  } finally { lock.releaseLock(); }
+}
+
+// শুধু অ্যাডমিন (টোকেন সহ): সর্বশেষ মেসেজ আগে
+function getMessages() {
+  var sheet = ensureSheet('Messages');
+  var list = rowsToObjects(sheet.getDataRange().getValues()).map(function(o) {
+    return {
+      messageId: String(o.messageid || ''), createdAt: String(o.createdat || ''),
+      name: String(o.name || ''), address: String(o.address || ''), mobile: String(o.mobile || ''),
+      title: String(o.title || ''), message: String(o.message || ''),
+      read: String(o.read || '') === '1'
+    };
+  }).filter(function(x) { return x.messageId; });
+  list.sort(function(a, b) { return a.createdAt < b.createdAt ? 1 : (a.createdAt > b.createdAt ? -1 : 0); });
+  return { messages: list.slice(0, 500) };
+}
+
+function markMessageRead(id) {
+  var lock = LockService.getScriptLock();
+  lock.waitLock(15000);
+  try {
+    var sheet = ensureSheet('Messages'), c = colIndex(sheet, 'messageId'), rc = colIndex(sheet, 'read');
+    var rows = sheet.getDataRange().getValues();
+    for (var i = 1; i < rows.length; i++) {
+      if (String(rows[i][c]) === String(id)) {
+        sheet.getRange(i + 1, rc + 1).setNumberFormat('@').setValue('1');
+        return { success: true };
+      }
+    }
+    return { error: 'মেসেজ পাওয়া যায়নি' };
+  } finally { lock.releaseLock(); }
+}
+
+function deleteMessage(id) {
+  var lock = LockService.getScriptLock();
+  lock.waitLock(15000);
+  try {
+    var sheet = ensureSheet('Messages'), c = colIndex(sheet, 'messageId');
+    var rows = sheet.getDataRange().getValues();
+    for (var i = 1; i < rows.length; i++) {
+      if (String(rows[i][c]) === String(id)) { sheet.deleteRow(i + 1); return { success: true }; }
+    }
+    return { error: 'মেসেজ পাওয়া যায়নি' };
+  } finally { lock.releaseLock(); }
+}
+
+/* ======== COMMENTS (পণ্যের কমেন্ট) ======== */
+
+// ব্রাউজারের গোপন owner আইডি থেকে হ্যাশ — কে কোন কমেন্টের মালিক তা চেনার জন্য (আইডি নিজে শীটে থাকে না)
+function ownerHashOf(owner) {
+  owner = String(owner || '');
+  if (!/^[A-Za-z0-9_-]{16,64}$/.test(owner)) return '';
+  var bytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, owner + '|nirvarbd');
+  return bytes.map(function(b) { return ('0' + (b & 0xff).toString(16)).slice(-2); }).join('');
+}
+
+function cmRowToObj(o, h) {
+  return {
+    commentId: String(o.commentid || ''), productId: String(o.productid || ''), productName: String(o.productname || ''),
+    name: String(o.name || ''), text: String(o.text || ''), createdAt: String(o.createdat || ''),
+    edited: !!String(o.updatedat || ''), mine: !!h && String(o.ownerhash || '') === h
+  };
+}
+
+// সবার জন্য খোলা: যে কেউ কমেন্ট দেখতে পারবে; "mine" শুধু নিজের কমেন্টে true
+function getComments(productId, owner) {
+  var pid = clipText(productId, 80);
+  if (!pid) return { comments: [] };
+  var h = ownerHashOf(owner);
+  var sheet = ensureSheet('Comments');
+  var list = rowsToObjects(sheet.getDataRange().getValues())
+    .filter(function(o) { return String(o.productid) === pid && o.commentid; })
+    .map(function(o) { return cmRowToObj(o, h); });
+  list.sort(function(a, b) { return a.createdAt < b.createdAt ? 1 : (a.createdAt > b.createdAt ? -1 : 0); });
+  return { comments: list.slice(0, 200) };
+}
+
+// শুধু অ্যাডমিন (টোকেন সহ)
+function getAllComments() {
+  var sheet = ensureSheet('Comments');
+  var list = rowsToObjects(sheet.getDataRange().getValues())
+    .filter(function(o) { return o.commentid; })
+    .map(function(o) { return cmRowToObj(o, ''); });
+  list.sort(function(a, b) { return a.createdAt < b.createdAt ? 1 : (a.createdAt > b.createdAt ? -1 : 0); });
+  return { comments: list.slice(0, 500) };
+}
+
+function saveComment(c, owner) {
+  c = c || {};
+  if (String(c.hp || '').trim()) return { success: true };   // বট
+  var h = ownerHashOf(owner);
+  if (!h) return { error: 'কমেন্ট করা যায়নি, পেজ রিফ্রেশ করে আবার চেষ্টা করুন' };
+  var pid = clipText(c.productId, 80), pname = clipText(c.productName, 120),
+      name = clipText(c.name, 40), text = clipText(c.text, 500, true);
+  if (!pid || !name || !text) return { error: 'নাম ও কমেন্ট লিখুন' };
+  var cache = CacheService.getScriptCache();
+  var tkey = 'cmthr_' + h.slice(0, 16);
+  var cnt = Number(cache.get(tkey) || 0), all = Number(cache.get('cmthr_all') || 0);
+  if (cnt >= 5 || all >= 200) return { error: 'অনেকবার কমেন্ট করা হয়েছে, কিছুক্ষণ পরে আবার চেষ্টা করুন' };
+  var lock = LockService.getScriptLock();
+  lock.waitLock(15000);
+  try {
+    var sheet = ensureSheet('Comments'), headers = getHeaders(sheet);
+    var id = 'CM-' + new Date().getTime() + '-' + Math.floor(Math.random() * 100000);
+    appendRowText(sheet, headers, {
+      'commentid': id, 'productid': pid, 'productname': pname, 'name': name, 'text': text,
+      'createdat': Utilities.formatDate(new Date(), TZ, "yyyy-MM-dd'T'HH:mm:ss"), 'updatedat': '', 'ownerhash': h
+    }, ['commentid', 'productid', 'productname', 'name', 'text', 'createdat', 'updatedat', 'ownerhash']);
+    cache.put(tkey, String(cnt + 1), 600);
+    cache.put('cmthr_all', String(all + 1), 3600);
+    return { success: true, commentId: id };
+  } finally { lock.releaseLock(); }
+}
+
+function findCommentRow(sheet, id) {
+  var c = colIndex(sheet, 'commentId'), rows = sheet.getDataRange().getValues();
+  for (var i = 1; i < rows.length; i++) if (String(rows[i][c]) === String(id)) return { row: i + 1, values: rows[i] };
+  return null;
+}
+
+// শুধু নিজের কমেন্ট এডিট করা যাবে
+function editComment(id, text, owner) {
+  var h = ownerHashOf(owner), t = clipText(text, 500, true);
+  if (!h) return { error: 'অনুমতি নেই' };
+  if (!t) return { error: 'কমেন্ট লিখুন' };
+  var lock = LockService.getScriptLock();
+  lock.waitLock(15000);
+  try {
+    var sheet = ensureSheet('Comments'), f = findCommentRow(sheet, id);
+    if (!f) return { error: 'কমেন্ট পাওয়া যায়নি' };
+    if (String(f.values[colIndex(sheet, 'ownerHash')]) !== h) return { error: 'শুধু নিজের কমেন্ট এডিট করা যায়' };
+    sheet.getRange(f.row, colIndex(sheet, 'text') + 1).setNumberFormat('@').setValue(t);
+    sheet.getRange(f.row, colIndex(sheet, 'updatedAt') + 1).setNumberFormat('@')
+      .setValue(Utilities.formatDate(new Date(), TZ, "yyyy-MM-dd'T'HH:mm:ss"));
+    return { success: true };
+  } finally { lock.releaseLock(); }
+}
+
+// নিজের কমেন্ট অথবা অ্যাডমিন (লগইন টোকেন সহ) ডিলেট করতে পারবে
+function deleteComment(id, owner, isAdmin) {
+  var h = ownerHashOf(owner);
+  var lock = LockService.getScriptLock();
+  lock.waitLock(15000);
+  try {
+    var sheet = ensureSheet('Comments'), f = findCommentRow(sheet, id);
+    if (!f) return { error: 'কমেন্ট পাওয়া যায়নি' };
+    var mine = !!h && String(f.values[colIndex(sheet, 'ownerHash')]) === h;
+    if (!isAdmin && !mine) return { error: 'শুধু নিজের কমেন্ট ডিলেট করা যায়' };
+    sheet.deleteRow(f.row);
+    return { success: true };
   } finally { lock.releaseLock(); }
 }
 

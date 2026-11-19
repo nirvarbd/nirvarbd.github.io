@@ -758,6 +758,68 @@
   .cat-set-row::before{ counter-increment:catn; content:counter(catn); text-align:center; font-size:0.78rem; color:var(--ink-soft); font-weight:700; }
   .cat-set-row .cat-name{ width:100%; box-sizing:border-box; padding:9px 10px; border:1px solid var(--hairline); border-radius:8px; font-family:inherit; font-size:0.92rem; background:var(--bg); }
   .cat-set-row .cat-name:focus{ border-color:var(--primary); outline:none; }
+
+  /* ===== v12: অর্ডার টপ বার, সময় ফিল্টার, মেসেজ ===== */
+  .order-top{ display:flex; flex-wrap:wrap; align-items:center; gap:8px 14px; margin-bottom:12px; }
+  .order-top .report-subnav{ margin:0; }
+  .order-actions{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+  .orp-fields{ display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end; margin:10px 0 12px; }
+  .orp-fields .field{ margin:0; flex:0 1 170px; min-width:130px; }
+  .orp-fields .field input, .orp-fields .field select{ width:100%; box-sizing:border-box; }
+  .modal .field textarea{ width:100%; box-sizing:border-box; padding:10px 12px; border:1px solid var(--hairline); border-radius:8px; font-family:inherit; font-size:0.95rem; resize:vertical; }
+  .msg-badge{ background:var(--danger,#d33); color:#fff; border-radius:10px; padding:0 7px; font-size:0.72rem; font-weight:700; margin-left:6px; line-height:1.5; }
+  .msg-item{ border:1px solid var(--hairline); border-radius:10px; background:var(--white); margin-bottom:10px; overflow:hidden; }
+  .msg-head{ display:flex; gap:10px; align-items:flex-start; padding:12px; cursor:pointer; }
+  .msg-main{ flex:1; min-width:0; }
+  .msg-t{ font-size:0.98rem; overflow-wrap:anywhere; }
+  .msg-item.unread .msg-t{ font-weight:800; }
+  .msg-item:not(.unread) .msg-t{ font-weight:400; }
+  .msg-meta{ font-size:0.78rem; color:var(--ink-soft); margin-top:3px; overflow-wrap:anywhere; }
+  .msg-body{ display:none; padding:2px 12px 12px; border-top:1px dashed var(--hairline); font-size:0.9rem; line-height:1.7; }
+  .msg-item.open .msg-body{ display:block; }
+  .msg-text{ white-space:pre-wrap; overflow-wrap:anywhere; margin:8px 0; }
+  .msg-body a{ margin-right:12px; }
+
+  /* ===== v13: মেনু সারি + ডানে রিফ্রেশ/প্রিন্ট ===== */
+  .report-menu-row{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:20px; }
+  .report-menu-row .report-menu-wrap{ margin-bottom:0; flex:0 1 auto; min-width:0; }
+  .report-menu-row .report-menu-btn{ max-width:100%; min-width:0; }
+  #reportMenuLabel{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0; }
+  .report-top-actions{ display:flex; gap:8px; flex:none; align-items:center; margin-left:auto; }
+  .report-top-actions .btn{ white-space:nowrap; padding:8px 12px; }
+  @media (max-width:520px){ .report-top-actions{ gap:6px; } .report-top-actions .btn{ padding:7px 9px; font-size:0.78rem; } }
+  .report-pane [id$="RefreshBtn"], .report-pane [id$="PrintBtn"]{ display:none !important; }
+  .table-toolbar:not(:has(> :not([id$="RefreshBtn"]):not([id$="PrintBtn"]))){ display:none; }
+
+  /* ===== v14: ফুটার মেসেজ বাটন, কমেন্ট, শেয়ার ===== */
+  .footer-top{ display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:16px; }
+  .footer-top .social-links{ justify-self:start; }
+  .footer-msg{ justify-self:center; }
+  .footer-top .footer-contact{ justify-self:end; }
+  .footer-msg-btn{ border:1.5px solid #0b0f1f; color:#0b0f1f; background:transparent; border-radius:999px; padding:8px 20px; font-weight:700; font-size:0.9rem; cursor:pointer; font-family:inherit; }
+  .footer-msg-btn:hover{ background:#0b0f1f; color:#fff; }
+  @media (max-width:600px){
+    .footer-top{ grid-template-columns:minmax(0,1fr); justify-items:center; }
+    .footer-top .social-links, .footer-top .footer-contact{ justify-self:center; }
+  }
+  .product-page-actions{ display:flex; flex-wrap:nowrap; gap:8px; }
+  .product-page-actions button{ flex:1 1 0; min-width:0; padding:11px 6px; font-size:0.9rem; line-height:1.25; white-space:normal; overflow-wrap:anywhere; }
+  @media (max-width:520px){
+    .product-page-actions{ gap:5px; }
+    .product-page-actions button{ padding:10px 3px; font-size:0.72rem; }
+  }
+  .share-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .share-grid .btn-secondary{ display:flex; align-items:center; justify-content:center; text-decoration:none; cursor:pointer; text-align:center; }
+  .cm-list{ max-height:42vh; overflow-y:auto; margin-bottom:12px; }
+  .cm-item{ border:1px solid var(--hairline); border-radius:10px; padding:10px 12px; margin-bottom:8px; background:var(--bg); }
+  .cm-head{ display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; align-items:baseline; }
+  .cm-date{ font-size:0.74rem; color:var(--ink-soft); }
+  .cm-text{ white-space:pre-wrap; overflow-wrap:anywhere; margin:6px 0 2px; font-size:0.92rem; line-height:1.6; }
+  .cm-actions{ display:flex; gap:8px; margin-top:6px; }
+  .cm-actions button{ background:none; border:1px solid var(--hairline); border-radius:6px; padding:3px 10px; font-size:0.78rem; cursor:pointer; font-family:inherit; }
+  .cm-actions button[data-act="del"]{ color:var(--danger,#c0392b); }
+  .cm-edit{ width:100%; box-sizing:border-box; padding:8px 10px; border:1px solid var(--hairline); border-radius:8px; font-family:inherit; font-size:0.92rem; margin-top:6px; }
+  .cm-form{ border-top:1px dashed var(--hairline); padding-top:12px; }
 </style>
 </head>
 <body>
@@ -852,7 +914,9 @@
       <div id="detailBody"></div>
       <div class="product-page-actions">
         <button class="btn-secondary" id="detailCartBtn" type="button">🛒 Add to Cart</button>
+        <button class="btn-secondary" id="detailCommentBtn" type="button">💬 Comment</button>
         <button class="btn-primary" id="detailBuyBtn" type="button">Buy Now</button>
+        <button class="btn-secondary" id="detailShareBtn" type="button">🔗 Share</button>
       </div>
     </div>
   </div>
@@ -898,6 +962,7 @@
         </span>
       </h2>
 
+      <div class="report-menu-row">
       <div class="report-menu-wrap" id="reportMenuWrap">
         <button class="report-menu-btn" id="reportMenuBtn" aria-expanded="false" aria-controls="reportSubnav" type="button">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
@@ -905,7 +970,13 @@
         </button>
         <div class="report-subnav report-menu" id="reportSubnav">
           <button class="active" data-pane="dashboard">Dashboard</button>
-          <button data-pane="orders">Orders</button>
+          <button type="button" class="has-sub" data-group="orders" aria-expanded="false"><span>Orders</span><span class="chev">▾</span></button>
+          <div class="sub-group" data-group="orders">
+            <button type="button" data-pane="orders" data-status="New">New Order</button>
+            <button type="button" data-pane="orders" data-status="Pending">Booking</button>
+            <button type="button" data-pane="orders" data-status="Delivery">Delivery</button>
+            <button type="button" data-pane="orders" data-status="Cancel">Cancel</button>
+          </div>
           <button type="button" class="has-sub" data-group="inventory" aria-expanded="false"><span>Products</span><span class="chev">▾</span></button>
           <div class="sub-group" data-group="inventory">
             <button type="button" data-pane="inventory" data-acc="plist">Products List</button>
@@ -929,6 +1000,8 @@
             <button type="button" data-pane="reportshort">Short Report</button>
             <button type="button" data-pane="report">Details Report</button>
           </div>
+          <button data-pane="messages"><span>Message</span><span class="msg-badge" id="msgBadge" style="display:none;">0</span></button>
+          <button data-pane="comments">Comments</button>
           <button type="button" class="has-sub" data-group="settings" aria-expanded="false"><span>Settings</span><span class="chev">▾</span></button>
           <div class="sub-group" data-group="settings">
             <button type="button" data-pane="aboutedit">About Us</button>
@@ -940,6 +1013,11 @@
             <button type="button" data-pane="settings" data-acc="payment">Payment</button>
           </div>
         </div>
+      </div>
+      <div class="report-top-actions" id="reportTopActions">
+        <button class="btn btn-outline btn-sm" id="topRefreshBtn" type="button" style="display:none;">রিফ্রেশ</button>
+        <button class="btn btn-outline btn-sm" id="topPrintBtn" type="button" style="display:none;">🖨️ প্রিন্ট করুন</button>
+      </div>
       </div>
 
       <!-- ---------- DASHBOARD ---------- -->
@@ -989,29 +1067,46 @@
 
       <!-- ---------- ORDERS REPORT ---------- -->
       <div class="report-pane" id="pane-orders">
-        <div class="report-subnav" id="orderStatusTabs">
-          <button class="active" data-status="New">নতুন অর্ডার</button>
-          <button data-status="Pending">বুকিং</button>
-          <button data-status="Delivery">ডেলিভারি সম্পন্ন</button>
-          <button data-status="Cancel">বাতিল</button>
+        <div class="order-top" style="justify-content:space-between;">
+          <div class="pill-tabs" id="orpTabs" style="margin:0;">
+            <button type="button" data-k="daily">দৈনিক</button>
+            <button type="button" data-k="weekly">সাপ্তাহিক</button>
+            <button type="button" data-k="monthly">মাসিক</button>
+            <button type="button" data-k="yearly">বাৎসরিক</button>
+            <button type="button" class="active" data-k="total">সব</button>
+          </div>
+          <div class="order-actions">
+            <button class="btn btn-outline btn-sm" id="ordersRefreshBtn" type="button">রিফ্রেশ</button>
+            <button class="btn btn-outline btn-sm" id="ordersPrintBtn" type="button">🖨️ প্রিন্ট করুন</button>
+            <button class="btn btn-sm" id="ordersDeleteAllBtn" type="button" style="display:none;background:var(--danger);color:#fff;">🗑️ সকল ডিলেট</button>
+          </div>
         </div>
-        <div class="pill-tabs" id="orpTabs">
-          <button type="button" data-k="daily">দৈনিক</button>
-          <button type="button" data-k="weekly">সাপ্তাহিক</button>
-          <button type="button" data-k="monthly">মাসিক</button>
-          <button type="button" data-k="yearly">বাৎসরিক</button>
-          <button type="button" class="active" data-k="total">সব</button>
-        </div>
-        <div class="period-bar">
-          <div class="field" style="display:none;"><label id="orpDateLabel">তারিখ বাছুন</label><input type="date" id="orpDate"></div>
-          <div class="field" id="orpToField" style="display:none;"><label>শেষ তারিখ</label><input type="date" id="orpDateTo"></div>
-        </div>
-        <div class="table-toolbar">
-          <button class="btn btn-outline btn-sm" id="ordersRefreshBtn">রিফ্রেশ</button>
-          <button class="btn btn-outline btn-sm" id="ordersPrintBtn">🖨️ প্রিন্ট করুন</button>
-          <button class="btn btn-sm" id="ordersDeleteAllBtn" style="display:none;background:var(--danger);color:#fff;">🗑️ সকল ডিলেট</button>
+        <div class="orp-fields">
+          <div class="field" id="orpF_date" style="display:none;"><label for="orpDate">তারিখ</label><input type="date" id="orpDate"></div>
+          <div class="field" id="orpF_from" style="display:none;"><label for="orpFrom">শুরুর তারিখ</label><input type="date" id="orpFrom"></div>
+          <div class="field" id="orpF_to" style="display:none;"><label for="orpTo">শেষ তারিখ</label><input type="date" id="orpTo"></div>
+          <div class="field" id="orpF_month" style="display:none;"><label for="orpMonth">মাস</label><select id="orpMonth"></select></div>
+          <div class="field" id="orpF_year" style="display:none;"><label for="orpYear">বছর</label><select id="orpYear"></select></div>
         </div>
         <div class="table-wrap" id="ordersTableWrap"><div class="empty-state">লোড হচ্ছে…</div></div>
+      </div>
+
+      <!-- ---------- MESSAGES ---------- -->
+      <div class="report-pane" id="pane-messages">
+        <div class="order-top">
+          <strong style="font-size:1rem;">Message <small id="msgCountInfo" style="font-weight:600;color:var(--ink-soft);"></small></strong>
+          <div class="order-actions"><button class="btn btn-outline btn-sm" id="msgRefreshBtn" type="button">রিফ্রেশ</button></div>
+        </div>
+        <div id="messagesWrap"><div class="empty-state">লোড হচ্ছে…</div></div>
+      </div>
+
+      <!-- ---------- COMMENTS (অ্যাডমিন) ---------- -->
+      <div class="report-pane" id="pane-comments">
+        <div class="order-top">
+          <strong style="font-size:1rem;">Comments <small id="cmAdminInfo" style="font-weight:600;color:var(--ink-soft);"></small></strong>
+          <div class="order-actions"><button class="btn btn-outline btn-sm" id="cmAdminRefreshBtn" type="button">রিফ্রেশ</button></div>
+        </div>
+        <div id="commentsAdminWrap"><div class="empty-state">লোড হচ্ছে…</div></div>
       </div>
 
       <!-- ---------- EXPENSE ---------- -->
@@ -1584,6 +1679,7 @@
   <div class="footer-name" id="footerName"></div>
   <div class="footer-top">
     <div class="social-links" id="socialLinks"></div>
+    <div class="footer-msg"><button type="button" class="footer-msg-btn" id="footerMsgBtn">মেসেজ পাঠান</button></div>
     <div class="footer-contact" id="footerContact"></div>
   </div>
   <div class="footer-credit" id="footerCredit"></div>
@@ -1669,6 +1765,52 @@
 </div>
 
 <!-- ===================== পাসওয়ার্ড উদ্ধার ===================== -->
+<div class="modal-scrim" id="commentsScrim">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="cmTitle" style="max-width:560px;">
+    <h3 style="margin-top:0;" id="cmTitle">কমেন্ট</h3>
+    <div id="cmList" class="cm-list"></div>
+    <div class="cm-form">
+      <div class="field" style="margin-bottom:8px;"><label for="cmName">আপনার নাম</label><input type="text" id="cmName" maxlength="40" autocomplete="name"></div>
+      <div class="field" style="margin-bottom:8px;"><label for="cmText">আপনার কমেন্ট লিখুন</label><textarea id="cmText" rows="3" maxlength="500"></textarea></div>
+      <input type="text" id="cmHp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0;height:0;width:0;">
+      <div class="gate-error" id="cmErr"></div>
+      <button class="btn btn-teal" id="cmPostBtn" type="button" style="width:100%;">কমেন্ট করুন</button>
+    </div>
+    <div class="modal-actions"><button class="btn-secondary" id="cmCloseBtn" type="button">বন্ধ করুন</button></div>
+  </div>
+</div>
+
+<div class="modal-scrim" id="shareScrim">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="shareTitle">
+    <h3 style="margin-top:0;" id="shareTitle">শেয়ার করুন</h3>
+    <div class="field" style="margin-bottom:10px;"><input type="text" id="shareUrl" readonly></div>
+    <div class="share-grid">
+      <button type="button" class="btn-secondary" id="shareCopyBtn">🔗 লিংক কপি</button>
+      <a class="btn-secondary" id="shareWa" target="_blank" rel="noopener">WhatsApp</a>
+      <a class="btn-secondary" id="shareFb" target="_blank" rel="noopener">Facebook</a>
+      <a class="btn-secondary" id="shareMail">Email</a>
+    </div>
+    <div class="modal-actions"><button class="btn-secondary" id="shareCloseBtn" type="button">বন্ধ করুন</button></div>
+  </div>
+</div>
+
+<div class="modal-scrim" id="msgScrim">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="msgModalTitle">
+    <h3 style="margin-top:0;" id="msgModalTitle">মেসেজ পাঠান</h3>
+    <div class="field" style="margin-bottom:10px;"><label for="msgName">আপনার নাম *</label><input type="text" id="msgName" maxlength="80" autocomplete="name"></div>
+    <div class="field" style="margin-bottom:10px;"><label for="msgAddr">ঠিকানা</label><input type="text" id="msgAddr" maxlength="200" autocomplete="street-address"></div>
+    <div class="field" style="margin-bottom:10px;"><label for="msgMobile">মোবাইল নং *</label><input type="tel" id="msgMobile" maxlength="20" autocomplete="tel"></div>
+    <div class="field" style="margin-bottom:10px;"><label for="msgTitle2">শিরোনাম *</label><input type="text" id="msgTitle2" maxlength="120"></div>
+    <div class="field" style="margin-bottom:10px;"><label for="msgText">মেসেজ *</label><textarea id="msgText" rows="4" maxlength="2000"></textarea></div>
+    <input type="text" id="msgHp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0;height:0;width:0;">
+    <div class="gate-error" id="msgErr"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="msgCancelBtn" type="button">বাতিল</button>
+      <button class="btn btn-teal" id="msgSendBtn" type="button">পাঠান</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-scrim" id="recoverScrim">
   <div class="modal" role="dialog" aria-modal="true">
     <h3 style="margin-top:0;">পাসওয়ার্ড উদ্ধার</h3>
@@ -1822,6 +1964,18 @@ const I18N = {
   'আপনার দৈনন্দিন প্রয়োজন, এক ক্লিকে': 'Your daily needs, one click away',
   'পছন্দের পণ্যে ক্লিক করুন, তথ্য দিয়ে ক্যাশ অন ডেলিভারিতে অর্ডার করুন': 'Pick your favourite products, press Buy Now, and order with Cash on Delivery',
   'সব ক্যাটাগরি': 'All categories',
+  'মেসেজ পাঠান': 'Send Message',
+  'কমেন্ট': 'Comments',
+  'আপনার নাম': 'Your name',
+  'আপনার কমেন্ট লিখুন': 'Write your comment',
+  'কমেন্ট করুন': 'Post Comment',
+  'এখনো কোনো কমেন্ট নেই। প্রথম কমেন্ট আপনি করুন।': 'No comments yet. Be the first to comment.',
+  'শেয়ার করুন': 'Share',
+  'লিংক কপি': 'Copy link',
+  'এডিট': 'Edit',
+  'ডিলেট': 'Delete',
+  'সংরক্ষণ': 'Save',
+  'বন্ধ করুন': 'Close',
   'পছন্দের পণ্য পেতে ক্যাটাগরি সিলেক্ট করুন': 'Select a category to find your products',
   'আরো': 'See more',
   'কোনো পণ্য পাওয়া যায়নি': 'No products found',
@@ -2192,7 +2346,7 @@ function applySiteInfo(){
   document.getElementById('footerContact').innerHTML =
     `<div class="ft-title">যোগাযোগ:</div>` +
     (phones ? `<div>📞 ${phones}</div>` : '') +
-    (SITE.email ? `<div>✉️ <a href="mailto:${esc(SITE.email)}">${esc(SITE.email)}</a></div>` : '');
+    (SITE.email ? `<div>✉️ <a class="mail-link" href="mailto:${esc(SITE.email)}">${esc(SITE.email)}</a></div>` : '');
   document.getElementById('footerCredit').innerHTML =
     (SITE.address ? `<div>📍 ${esc(SITE.address)}</div>` : '') +
     `<div id="footerRights" class="ft-tap">© ${new Date().getFullYear()} ${esc(name)} — সকল অধিকার সংরক্ষিত</div>` +
@@ -2200,7 +2354,7 @@ function applySiteInfo(){
     `<div id="footerDevInfo" style="display:none;margin-top:6px;font-size:0.9em;line-height:1.9;">` +
       `<div>Mobile No (WhatsApp): <a href="#" id="devPhoneBtn" style="font-weight:700;">01605721296</a></div>` +
       `<div id="devPhoneOpts" style="display:none;"><a href="tel:+8801605721296" style="margin-right:12px;">📞 কল করুন</a><a href="https://wa.me/8801605721296" target="_blank" rel="noopener">💬 WhatsApp মেসেজ</a></div>` +
-      `<div>Email: <a href="mailto:amneed96@gmail.com">amneed96@gmail.com</a></div>` +
+      `<div>Email: <a class="mail-link" href="mailto:amneed96@gmail.com" id="devEmailLink">amneed96@gmail.com</a></div>` +
     `</div>`;
 }
 
@@ -2212,6 +2366,20 @@ function applySocialLinks(){
   }).join('');
   document.getElementById('socialLinks').innerHTML = html;
 }
+// ইমেইল লিংকে ক্লিক করলে সরাসরি ইমেইল লেখার ফরম খোলে (মোবাইলে ইমেইল অ্যাপ, কম্পিউটারে Gmail)
+document.addEventListener('click', e=>{
+  const a = e.target.closest('a.mail-link');
+  if (!a) return;
+  e.preventDefault();
+  const to = (a.getAttribute('href') || '').replace(/^mailto:/i, '').split('?')[0];
+  if (!to) return;
+  if (/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)) location.href = 'mailto:' + to;
+  else window.open('https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(to), '_blank', 'noopener');
+});
+document.addEventListener('click', e=>{
+  const b = e.target.closest('#footerMsgBtn');
+  if (b){ e.preventDefault(); openMsgModal(); }
+});
 
 /* ---------- ডেলিভারি চার্জ ---------- */
 function applyDeliverySettings(s){
@@ -2329,14 +2497,15 @@ function openAuthority(){
   checkAdminGate();
   window.scrollTo(0, 0);
 }
-// "ওয়েবসাইটের নাম — সকল অধিকার সংরক্ষিত" লেখায় ডাবল ক্লিক/ডাবল ট্যাপ করলে লগইন ফরম
+// "ওয়েবসাইটের নাম — সকল অধিকার সংরক্ষিত" লেখায় ৩ বার ক্লিক/ট্যাপ করলে লগইন ফরম
 // "© AM Shahed" লেখায় ক্লিক করলে যোগাযোগ তথ্য দেখায়/লুকায়
-let _lastRightsTap = 0;
+let _rightsTaps = 0, _rightsTimer = null;
 document.getElementById('footerCredit').addEventListener('click', e=>{
   if (e.target.closest('#footerRights')){
-    const now = Date.now();
-    if (now - _lastRightsTap < 450){ _lastRightsTap = 0; openAuthority(); }
-    else _lastRightsTap = now;
+    _rightsTaps++;
+    clearTimeout(_rightsTimer);
+    if (_rightsTaps >= 3){ _rightsTaps = 0; openAuthority(); }
+    else _rightsTimer = setTimeout(()=>{ _rightsTaps = 0; }, 700);
     return;
   }
   if (e.target.closest('#devPhoneBtn')){
@@ -2509,7 +2678,7 @@ document.querySelectorAll('#reportSubnav button[data-pane]').forEach(btn=>{
     const pane = document.getElementById('pane-' + btn.dataset.pane);
     pane.classList.add('active');
     if (btn.dataset.pane === 'dashboard') loadDashboard();
-    if (btn.dataset.pane === 'orders') loadOrdersReport();
+    if (btn.dataset.pane === 'orders'){ if (btn.dataset.status) currentReportStatus = btn.dataset.status; loadOrdersReport(); }
     if (btn.dataset.pane === 'expense') loadExpenseReport();
     if (btn.dataset.pane === 'shop') loadShopPane();
     if (btn.dataset.pane === 'income') loadIncomes();
@@ -2718,6 +2887,7 @@ function openProductDetail(id, fromHash){
     ${(!isMeasure(p) && listOf(p.sizes).length) ? `<div class="detail-opt"><b>Size:</b> ${listOf(p.sizes).map(c=>`<span class="detail-chip">${esc(c)}</span>`).join('')}</div>` : ''}
     ${p.soldOut ? `<div class="detail-opt"><span class="stockout-tag">Stock Out</span></div>` : ''}
     ${String(p.desc || '').trim() ? `<p class="detail-desc">${esc(p.desc)}</p>` : ''}`;
+  document.getElementById('detailCommentBtn').textContent = '💬 Comment';
   const dBuy = document.getElementById('detailBuyBtn');
   dBuy.disabled = !!p.soldOut;
   dBuy.textContent = p.soldOut ? 'Stock Out' : 'Buy Now';
@@ -3776,24 +3946,29 @@ async function toggleProductStatus(id){
 /* ===================== ORDERS REPORT ===================== */
 let _currentOrdersList = [];
 
-document.querySelectorAll('#orderStatusTabs button').forEach(tab=>{
-  tab.addEventListener('click', ()=>{
-    document.querySelectorAll('#orderStatusTabs button').forEach(t=>t.classList.remove('active'));
-    tab.classList.add('active');
-    currentReportStatus = tab.dataset.status;
-    loadOrdersReport();
-  });
-});
 document.getElementById('ordersRefreshBtn').addEventListener('click', loadOrdersReport);
 // সময় ভিত্তিক ফিল্টার (সব স্ট্যাটাসে: দৈনিক / সাপ্তাহিক / মাসিক / বাৎসরিক / সব)
 function ordersMonthSel(){
   if (typeof ORP === 'undefined' || ORP.kind === 'total') return '';
-  return rangeOf(ORP).label;
+  const MN = ['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
+  if (ORP.kind === 'daily') return dmy(ORP.date);
+  if (ORP.kind === 'weekly') return dmy(ORP.from) + ' — ' + dmy(ORP.to);
+  if (ORP.kind === 'monthly') return MN[Number(ORP.month) - 1] + ' ' + ORP.year;
+  return 'বছর ' + ORP.year;
 }
 function ordersView(){
   if (typeof ORP === 'undefined' || ORP.kind === 'total') return _currentOrdersList;
-  const r = rangeOf(ORP);
-  return _currentOrdersList.filter(o=> inRange(o.timestamp, r));
+  return _currentOrdersList.filter(o=>{
+    const d = String(toYmd(o.timestamp) || '');
+    if (!d) return false;
+    if (ORP.kind === 'daily') return d === ORP.date;
+    if (ORP.kind === 'weekly'){
+      let f = ORP.from, t = ORP.to; if (f && t && f > t){ const x = f; f = t; t = x; }
+      return (!f || d >= f) && (!t || d <= t);
+    }
+    if (ORP.kind === 'monthly') return d.slice(0,7) === ORP.year + '-' + String(ORP.month).padStart(2,'0');
+    return d.slice(0,4) === String(ORP.year);
+  });
 }
 document.getElementById('ordersDeleteAllBtn').addEventListener('click', async ()=>{
   if (!_currentOrdersList.length) return;
@@ -5680,8 +5855,32 @@ function printReportDoc(title, periodLabel, bodyHtml){
 
 /* ---------- Report ---------- */
 let RPT_DATA = null;
-var ORP = wirePeriod('orp', ()=> renderOrdersTable());
-ORP.kind = 'total';
+var ORP = { kind:'total' };
+(function(){
+  const now = new Date(), y = now.getFullYear(), today = ymdOf(now);
+  const MN = ['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
+  const el = id=> document.getElementById(id);
+  el('orpMonth').innerHTML = MN.map((n,i)=> `<option value="${i+1}"${i === now.getMonth() ? ' selected' : ''}>${n}</option>`).join('');
+  el('orpYear').innerHTML = Array.from({length:8}, (_,k)=> y - k).map(v=> `<option value="${v}">${v}</option>`).join('');
+  el('orpDate').value = today; el('orpFrom').value = today; el('orpTo').value = today;
+  const show = {
+    daily:['orpF_date'], weekly:['orpF_from','orpF_to'], monthly:['orpF_month','orpF_year'], yearly:['orpF_year'], total:[]
+  };
+  function sync(rerender){
+    const act = document.querySelector('#orpTabs button.active');
+    ORP.kind = act ? act.dataset.k : 'total';
+    ORP.date = el('orpDate').value; ORP.from = el('orpFrom').value; ORP.to = el('orpTo').value;
+    ORP.month = el('orpMonth').value; ORP.year = el('orpYear').value;
+    ['orpF_date','orpF_from','orpF_to','orpF_month','orpF_year'].forEach(id=>{ el(id).style.display = show[ORP.kind].indexOf(id) >= 0 ? '' : 'none'; });
+    if (rerender) renderOrdersTable();
+  }
+  document.querySelectorAll('#orpTabs button').forEach(b=> b.addEventListener('click', ()=>{
+    document.querySelectorAll('#orpTabs button').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active'); sync(true);
+  }));
+  ['orpDate','orpFrom','orpTo','orpMonth','orpYear'].forEach(id=> el(id).addEventListener('change', ()=> sync(true)));
+  sync(false);
+})();
 const RPT = wirePeriod('rpt', ()=> renderReport());
 
 async function loadReport(){
@@ -6205,11 +6404,298 @@ function recomputeLowStock(){
   c.style.display = LOW_STOCK.length ? '' : 'none';
 }
 function setLowStock(products){ LOW_RAW = products || []; recomputeLowStock(); }
+
+
+/* ---------- মেনু বরাবর রিফ্রেশ / প্রিন্ট (সক্রিয় পেজের বাটনে কাজ পাঠায়) ---------- */
+function topActionTarget(kind){
+  const pane = document.querySelector('#adminView .report-pane.active'); if (!pane) return null;
+  const list = Array.from(pane.querySelectorAll('[id$="' + kind + 'Btn"]'));
+  return list.find(b=>{ const acc = b.closest('.acc'); return !acc || acc.classList.contains('open'); }) || null;
+}
+function updateTopActions(){
+  const r = document.getElementById('topRefreshBtn'), p = document.getElementById('topPrintBtn');
+  if (!r || !p) return;
+  r.style.display = topActionTarget('Refresh') ? '' : 'none';
+  p.style.display = topActionTarget('Print') ? '' : 'none';
+}
+document.getElementById('topRefreshBtn').addEventListener('click', ()=>{ const t = topActionTarget('Refresh'); if (t) t.click(); });
+document.getElementById('topPrintBtn').addEventListener('click', ()=>{ const t = topActionTarget('Print'); if (t) t.click(); });
+document.getElementById('adminView').addEventListener('click', ()=> setTimeout(updateTopActions, 60));
+setTimeout(updateTopActions, 300);
+setInterval(updateTopActions, 1500);
+
+
+/* ---------- শেয়ার ---------- */
+function productShareUrl(id){ return location.origin + location.pathname + '#product-' + encodeURIComponent(id); }
+function openShareModal(url, title){
+  document.getElementById('shareUrl').value = url;
+  const enc = encodeURIComponent(url), tx = encodeURIComponent(title + ' ' + url);
+  document.getElementById('shareWa').href = 'https://wa.me/?text=' + tx;
+  document.getElementById('shareFb').href = 'https://www.facebook.com/sharer/sharer.php?u=' + enc;
+  document.getElementById('shareMail').href = 'mailto:?subject=' + encodeURIComponent(title) + '&body=' + tx;
+  document.getElementById('shareScrim').classList.add('open');
+}
+async function shareProduct(){
+  const p = PRODUCTS.find(x=>String(x.id)===String(detailProductId)); if (!p) return;
+  const url = productShareUrl(p.id), title = p.name + ' — ' + (SITE.name || 'NirvarBD');
+  if (navigator.share){
+    try{ await navigator.share({ title, text:title, url }); return; }
+    catch(e){ if (e && e.name === 'AbortError') return; }
+  }
+  openShareModal(url, title);
+}
+document.getElementById('detailShareBtn').addEventListener('click', shareProduct);
+document.getElementById('shareCloseBtn').addEventListener('click', ()=> document.getElementById('shareScrim').classList.remove('open'));
+document.getElementById('shareCopyBtn').addEventListener('click', async ()=>{
+  const inp = document.getElementById('shareUrl');
+  try{ await navigator.clipboard.writeText(inp.value); }
+  catch(e){ inp.select(); try{ document.execCommand('copy'); }catch(e2){} }
+  showToast('লিংক কপি হয়েছে');
+});
+
+/* ---------- পণ্যের কমেন্ট ---------- */
+let CM_PID = '', CM_PNAME = '', CM_LIST = [];
+function ownerId(){
+  let id = '';
+  try{ id = localStorage.getItem('nirvarbd_owner') || ''; }catch(e){}
+  if (!/^[A-Za-z0-9_-]{16,64}$/.test(id)){
+    id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID().replace(/-/g,'') : (Date.now().toString(36) + Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2) + 'xxxxxxxxxxxxxxxx').slice(0, 32);
+    try{ localStorage.setItem('nirvarbd_owner', id); }catch(e){}
+  }
+  return id;
+}
+function openComments(){
+  const p = PRODUCTS.find(x=>String(x.id)===String(detailProductId)); if (!p) return;
+  CM_PID = String(p.id); CM_PNAME = p.name; CM_LIST = [];
+  document.getElementById('cmTitle').textContent = 'কমেন্ট — ' + p.name;
+  let nm = ''; try{ nm = localStorage.getItem('nirvarbd_cm_name') || ''; }catch(e){}
+  document.getElementById('cmName').value = nm;
+  document.getElementById('cmText').value = '';
+  document.getElementById('cmErr').textContent = '';
+  document.getElementById('cmList').innerHTML = '<div class="empty-state">লোড হচ্ছে…</div>';
+  document.getElementById('commentsScrim').classList.add('open');
+  loadComments();
+}
+async function loadComments(){
+  try{
+    const d = await apiGet('action=comments&productId=' + encodeURIComponent(CM_PID) + '&owner=' + encodeURIComponent(ownerId()));
+    if (d.error){ document.getElementById('cmList').innerHTML = `<div class="empty-state">${esc(d.error)}</div>`; return; }
+    CM_LIST = d.comments || [];
+    renderComments();
+  }catch(e){ document.getElementById('cmList').innerHTML = '<div class="empty-state">কমেন্ট লোড করা যায়নি</div>'; }
+}
+function renderComments(){
+  const admin = isAdminUnlocked();
+  document.getElementById('cmList').innerHTML = CM_LIST.length ? CM_LIST.map(c=>`
+    <div class="cm-item" data-id="${esc(c.commentId)}">
+      <div class="cm-head"><b>${esc(c.name)}</b><span class="cm-date">${esc(msgDate(c.createdAt))}${c.edited ? ' · সম্পাদিত' : ''}</span></div>
+      <div class="cm-text">${esc(c.text)}</div>
+      ${(c.mine || admin) ? `<div class="cm-actions">${c.mine ? '<button type="button" data-act="edit">এডিট</button>' : ''}<button type="button" data-act="del">ডিলেট</button></div>` : ''}
+    </div>`).join('') : '<div class="empty-state">এখনো কোনো কমেন্ট নেই। প্রথম কমেন্ট আপনি করুন।</div>';
+  document.getElementById('detailCommentBtn').textContent = '💬 Comment' + (CM_LIST.length ? ' (' + CM_LIST.length + ')' : '');
+}
+document.getElementById('detailCommentBtn').addEventListener('click', openComments);
+document.getElementById('cmCloseBtn').addEventListener('click', ()=> document.getElementById('commentsScrim').classList.remove('open'));
+document.getElementById('cmPostBtn').addEventListener('click', async ()=>{
+  const err = document.getElementById('cmErr'), btn = document.getElementById('cmPostBtn');
+  const name = document.getElementById('cmName').value.trim(), text = document.getElementById('cmText').value.trim();
+  if (!name || !text){ err.textContent = 'নাম ও কমেন্ট লিখুন'; return; }
+  err.textContent = ''; btn.disabled = true;
+  try{
+    const res = await apiPost({ action:'addComment', owner:ownerId(), comment:{ productId:CM_PID, productName:CM_PNAME, name, text, hp:document.getElementById('cmHp').value } });
+    if (res.error){ err.textContent = res.error; return; }
+    try{ localStorage.setItem('nirvarbd_cm_name', name); }catch(e){}
+    document.getElementById('cmText').value = '';
+    await loadComments();
+  }catch(e){ err.textContent = 'কমেন্ট করা যায়নি, আবার চেষ্টা করুন'; }
+  finally{ btn.disabled = false; }
+});
+document.getElementById('cmList').addEventListener('click', async e=>{
+  const b = e.target.closest('button[data-act]'); if (!b) return;
+  const item = b.closest('.cm-item'), id = item.dataset.id, act = b.dataset.act;
+  const c = CM_LIST.find(x=> x.commentId === id); if (!c) return;
+  if (act === 'edit'){
+    item.querySelector('.cm-text').outerHTML = `<textarea class="cm-edit" rows="3" maxlength="500">${esc(c.text)}</textarea>`;
+    item.querySelector('.cm-actions').innerHTML = '<button type="button" data-act="save">সংরক্ষণ</button><button type="button" data-act="cancel">বাতিল</button>';
+    return;
+  }
+  if (act === 'cancel'){ renderComments(); return; }
+  if (act === 'save'){
+    const t = item.querySelector('.cm-edit').value.trim();
+    if (!t){ showToast('কমেন্ট লিখুন'); return; }
+    try{
+      const res = await apiPost({ action:'editComment', commentId:id, text:t, owner:ownerId() });
+      if (res.error){ showToast(res.error); return; }
+      await loadComments();
+    }catch(err){ showToast('এডিট করা যায়নি'); }
+    return;
+  }
+  if (act === 'del'){
+    if (!ask('এই কমেন্ট মুছে ফেলবেন?')) return;
+    try{
+      const res = await apiPost({ action:'deleteComment', commentId:id, owner:ownerId() });
+      if (res.error){ showToast(res.error); return; }
+      CM_LIST = CM_LIST.filter(x=> x.commentId !== id); renderComments();
+    }catch(err){ showToast('মোছা যায়নি'); }
+  }
+});
+
+/* ---------- কমেন্ট: অ্যাডমিন তালিকা ---------- */
+let CM_ALL = [];
+function renderCommentsAdmin(){
+  const wrap = document.getElementById('commentsAdminWrap');
+  document.getElementById('cmAdminInfo').textContent = CM_ALL.length ? '(মোট ' + CM_ALL.length + ')' : '';
+  wrap.innerHTML = CM_ALL.length ? CM_ALL.map(c=>`
+    <div class="cm-item" data-id="${esc(c.commentId)}">
+      <div class="cm-head"><b>${esc(c.productName || c.productId)}</b><span class="cm-date">${esc(c.name)} · ${esc(msgDate(c.createdAt))}${c.edited ? ' · সম্পাদিত' : ''}</span></div>
+      <div class="cm-text">${esc(c.text)}</div>
+      <div class="cm-actions"><button type="button" data-act="del">🗑️ ডিলেট</button></div>
+    </div>`).join('') : '<div class="empty-state">কোনো কমেন্ট নেই</div>';
+}
+async function loadCommentsAdmin(){
+  const wrap = document.getElementById('commentsAdminWrap');
+  if (!CM_ALL.length) wrap.innerHTML = '<div class="empty-state">লোড হচ্ছে…</div>';
+  try{
+    const d = await apiGet('action=allcomments');
+    if (d.error){ wrap.innerHTML = `<div class="empty-state">${esc(d.error)}</div>`; return; }
+    CM_ALL = d.comments || []; renderCommentsAdmin();
+  }catch(e){ wrap.innerHTML = '<div class="empty-state">কমেন্ট লোড করা যায়নি</div>'; }
+}
+document.getElementById('cmAdminRefreshBtn').addEventListener('click', loadCommentsAdmin);
+document.getElementById('commentsAdminWrap').addEventListener('click', async e=>{
+  const b = e.target.closest('button[data-act="del"]'); if (!b) return;
+  const id = b.closest('.cm-item').dataset.id;
+  if (!ask('এই কমেন্ট মুছে ফেলবেন?')) return;
+  try{
+    const res = await apiPost({ action:'deleteComment', commentId:id });
+    if (res.error){ showToast(res.error); return; }
+    CM_ALL = CM_ALL.filter(x=> x.commentId !== id); renderCommentsAdmin(); showToast('কমেন্ট মুছে ফেলা হয়েছে');
+  }catch(err){ showToast('মোছা যায়নি'); }
+});
+document.querySelector('#reportSubnav button[data-pane="comments"]').addEventListener('click', ()=>{
+  document.getElementById('reportMenuLabel').textContent = 'Comments';
+  loadCommentsAdmin();
+});
+
+/* ---------- মেসেজ: কাস্টমার ফরম ---------- */
+function openMsgModal(){
+  document.getElementById('msgErr').textContent = '';
+  document.getElementById('msgScrim').classList.add('open');
+  setTimeout(()=>{ const f = document.getElementById('msgName'); if (f) f.focus(); }, 50);
+}
+function closeMsgModal(){ document.getElementById('msgScrim').classList.remove('open'); }
+document.getElementById('msgCancelBtn').addEventListener('click', closeMsgModal);
+document.getElementById('msgSendBtn').addEventListener('click', async ()=>{
+  const v = id=> document.getElementById(id).value.trim();
+  const err = document.getElementById('msgErr'), btn = document.getElementById('msgSendBtn');
+  const m = { name:v('msgName'), address:v('msgAddr'), mobile:v('msgMobile'), title:v('msgTitle2'), message:v('msgText'), hp:v('msgHp') };
+  if (!m.name || !m.mobile || !m.title || !m.message){ err.textContent = 'নাম, মোবাইল নং, শিরোনাম ও মেসেজ লিখুন'; return; }
+  if (!/^\+?\d{10,15}$/.test(m.mobile.replace(/[\s-]/g,''))){ err.textContent = 'মোবাইল নম্বর সঠিক নয়'; return; }
+  let last = 0; try{ last = Number(localStorage.getItem('nirvarbd_last_msg') || 0); }catch(e){}
+  if (Date.now() - last < 30000){ err.textContent = 'একটু পরে আবার মেসেজ পাঠান'; return; }
+  if (!API_URL){ err.textContent = 'সার্ভার সংযোগ নেই'; return; }
+  err.textContent = ''; btn.disabled = true; btn.textContent = 'পাঠানো হচ্ছে…';
+  try{
+    const res = await apiPost({ action:'sendMessage', message:m });
+    if (res.error){ err.textContent = res.error; return; }
+    try{ localStorage.setItem('nirvarbd_last_msg', String(Date.now())); }catch(e){}
+    ['msgName','msgAddr','msgMobile','msgTitle2','msgText','msgHp'].forEach(id=> document.getElementById(id).value = '');
+    closeMsgModal();
+    showToast('মেসেজ পাঠানো হয়েছে, ধন্যবাদ');
+  }catch(e){ err.textContent = 'মেসেজ পাঠানো যায়নি, আবার চেষ্টা করুন'; }
+  finally{ btn.disabled = false; btn.textContent = 'পাঠান'; }
+});
+
+/* ---------- মেসেজ: অ্যাডমিন তালিকা ---------- */
+let MESSAGES = [];
+function updateMsgBadge(){
+  const b = document.getElementById('msgBadge'); if (!b) return;
+  const n = MESSAGES.filter(m=> !m.read).length;
+  b.textContent = n > 99 ? '99+' : String(n);
+  b.style.display = n ? '' : 'none';
+  const info = document.getElementById('msgCountInfo');
+  if (info) info.textContent = MESSAGES.length ? '(মোট ' + MESSAGES.length + (n ? ', নতুন ' + n : '') + ')' : '';
+}
+async function refreshMsgBadge(){
+  if (!isAdminUnlocked() || !API_URL) return;
+  try{ const d = await apiGet('action=messages'); if (Array.isArray(d.messages)){ MESSAGES = d.messages; updateMsgBadge(); } }catch(e){}
+}
+function msgDate(s){
+  if (!s) return '';
+  const d = new Date(s);
+  if (isNaN(d)) return String(s);
+  return d.toLocaleString('bn-BD', { day:'numeric', month:'short', year:'numeric', hour:'numeric', minute:'2-digit' });
+}
+function renderMessages(){
+  const wrap = document.getElementById('messagesWrap');
+  if (!MESSAGES.length){ wrap.innerHTML = '<div class="empty-state">কোনো মেসেজ নেই</div>'; updateMsgBadge(); return; }
+  const open = new Set(Array.from(wrap.querySelectorAll('.msg-item.open')).map(x=>x.dataset.id));
+  wrap.innerHTML = MESSAGES.map(m=>{
+    const tel = String(m.mobile).replace(/[^\d+]/g,'');
+    const wa = tel.replace(/^\+/,'').replace(/^0/,'880');
+    return `<div class="msg-item${m.read ? '' : ' unread'}${open.has(m.messageId) ? ' open' : ''}" data-id="${esc(m.messageId)}">
+      <div class="msg-head">
+        <div class="msg-main">
+          <div class="msg-t">${esc(m.title)}</div>
+          <div class="msg-meta">${esc(m.name)} · ${esc(m.mobile)} · ${esc(msgDate(m.createdAt))}</div>
+        </div>
+        <button type="button" class="btn btn-sm msg-del" data-del="${esc(m.messageId)}" style="background:var(--danger);color:#fff;">🗑️ ডিলেট</button>
+      </div>
+      <div class="msg-body">
+        <div class="msg-text">${esc(m.message)}</div>
+        ${m.address ? `<div><b>ঠিকানা:</b> ${esc(m.address)}</div>` : ''}
+        <div style="margin-top:6px;"><a href="tel:${esc(tel)}">📞 কল</a><a href="https://wa.me/${esc(wa)}" target="_blank" rel="noopener">💬 WhatsApp</a></div>
+      </div>
+    </div>`;
+  }).join('');
+  updateMsgBadge();
+}
+async function loadMessages(){
+  const wrap = document.getElementById('messagesWrap');
+  if (!MESSAGES.length) wrap.innerHTML = '<div class="empty-state">লোড হচ্ছে…</div>';
+  try{
+    const d = await apiGet('action=messages');
+    if (d.error){ wrap.innerHTML = `<div class="empty-state">${esc(d.error)}</div>`; return; }
+    MESSAGES = d.messages || [];
+    renderMessages();
+  }catch(e){ wrap.innerHTML = '<div class="empty-state">মেসেজ লোড করা যায়নি</div>'; }
+}
+document.getElementById('msgRefreshBtn').addEventListener('click', loadMessages);
+document.getElementById('messagesWrap').addEventListener('click', async e=>{
+  const del = e.target.closest('[data-del]');
+  if (del){
+    e.stopPropagation();
+    if (!ask('এই মেসেজ মুছে ফেলবেন?')) return;
+    const id = del.dataset.del;
+    try{
+      const res = await apiPost({ action:'deleteMessage', messageId:id });
+      if (res.error){ showToast(res.error); return; }
+      MESSAGES = MESSAGES.filter(m=> m.messageId !== id);
+      renderMessages(); showToast('মেসেজ মুছে ফেলা হয়েছে');
+    }catch(err){ showToast('মোছা যায়নি'); }
+    return;
+  }
+  if (e.target.closest('.msg-body a')) return;
+  const head = e.target.closest('.msg-head'); if (!head) return;
+  const item = head.closest('.msg-item'), id = item.dataset.id;
+  item.classList.toggle('open');
+  const m = MESSAGES.find(x=> x.messageId === id);
+  if (m && !m.read){
+    m.read = true; item.classList.remove('unread'); updateMsgBadge();
+    try{ await apiPost({ action:'markMessageRead', messageId:id }); }catch(err){}
+  }
+});
+document.querySelector('#reportSubnav button[data-pane="messages"]').addEventListener('click', ()=>{
+  document.getElementById('reportMenuLabel').textContent = 'Message';
+  loadMessages();
+});
+
 async function refreshLowStock(){
   const btn = document.getElementById('lowStockBtn');
   const unlocked = isAdminUnlocked();
   btn.style.display = unlocked ? '' : 'none';   // শুধু অ্যাডমিনের জন্য
   if (!unlocked || !API_URL) return;
+  refreshMsgBadge();
   try{ const d = await apiGet('action=stock'); setLowStock(d.products); }catch(e){}
 }
 function openLowStock(){
