@@ -6545,12 +6545,21 @@ let CM_ALL = [];
 function renderCommentsAdmin(){
   const wrap = document.getElementById('commentsAdminWrap');
   document.getElementById('cmAdminInfo').textContent = CM_ALL.length ? '(মোট ' + CM_ALL.length + ')' : '';
-  wrap.innerHTML = CM_ALL.length ? CM_ALL.map(c=>`
-    <div class="cm-item" data-id="${esc(c.commentId)}">
-      <div class="cm-head"><b>${esc(c.productName || c.productId)}</b><span class="cm-date">${esc(c.name)} · ${esc(msgDate(c.createdAt))}${c.edited ? ' · সম্পাদিত' : ''}</span></div>
-      <div class="cm-text">${esc(c.text)}</div>
-      <div class="cm-actions"><button type="button" data-act="del">🗑️ ডিলেট</button></div>
-    </div>`).join('') : '<div class="empty-state">কোনো কমেন্ট নেই</div>';
+  if (!CM_ALL.length){ wrap.innerHTML = '<div class="empty-state">কোনো কমেন্ট নেই</div>'; return; }
+  const dt = s=>{
+    const d = new Date(s);
+    if (isNaN(d)) return esc(s);
+    return d.toLocaleDateString('bn-BD', { day:'numeric', month:'short', year:'numeric' }) + ', ' + d.toLocaleTimeString('bn-BD', { hour:'numeric', minute:'2-digit' });
+  };
+  wrap.innerHTML = `<div class="table-wrap"><table class="data-table" style="min-width:0;">
+    <thead><tr><th>পণ্যের নাম</th><th>কমেন্ট</th><th>কমেন্টকারীর নাম</th><th>তারিখ ও সময়</th><th>বাটন</th></tr></thead>
+    <tbody>${CM_ALL.map(c=>`<tr data-id="${esc(c.commentId)}">
+      <td style="white-space:nowrap;text-align:left;"><b>${esc(c.productName || c.productId)}</b></td>
+      <td style="white-space:nowrap;text-align:left;">${esc(String(c.text).replace(/\s*\n+\s*/g, ' '))}${c.edited ? ' <small style="color:var(--ink-soft);">(সম্পাদিত)</small>' : ''}</td>
+      <td style="white-space:nowrap;text-align:left;">${esc(c.name)}</td>
+      <td style="white-space:nowrap;text-align:center;">${dt(c.createdAt)}</td>
+      <td style="text-align:center;"><button type="button" class="btn btn-sm" data-act="del" style="background:var(--danger);color:#fff;">🗑️ ডিলেট</button></td>
+    </tr>`).join('')}</tbody></table></div>`;
 }
 async function loadCommentsAdmin(){
   const wrap = document.getElementById('commentsAdminWrap');
@@ -6564,7 +6573,7 @@ async function loadCommentsAdmin(){
 document.getElementById('cmAdminRefreshBtn').addEventListener('click', loadCommentsAdmin);
 document.getElementById('commentsAdminWrap').addEventListener('click', async e=>{
   const b = e.target.closest('button[data-act="del"]'); if (!b) return;
-  const id = b.closest('.cm-item').dataset.id;
+  const id = b.closest('tr').dataset.id;
   if (!ask('এই কমেন্ট মুছে ফেলবেন?')) return;
   try{
     const res = await apiPost({ action:'deleteComment', commentId:id });
