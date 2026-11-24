@@ -3643,7 +3643,7 @@ document.getElementById('dashboardPrintBtn').addEventListener('click', ()=>{
 const IMGBB_API_KEY = "a3690269b45e1b19e77ae60fcb34d0bf"; // imgbb.com থেকে ফ্রি API key নিয়ে এখানে বসান
 
 // আপলোডের আগে ছবি ছোট করে WebP করা (প্রায় ৪০–৮০ KB)
-async function compressImage(file, maxSide=800, quality=0.82){
+async function compressImage(file, maxSide=1000, quality=0.85){
   try{
     const bmp = await createImageBitmap(file);
     const scale = Math.min(1, maxSide / Math.max(bmp.width, bmp.height));
